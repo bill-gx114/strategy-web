@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>策略产品私人档案馆 | UI Preview</title>
+  <style>
+    :root {
+      --paper: #f4efdf;
+      --paper-deep: #e6dcc2;
+      --paper-card: #fffaf0;
+      --ink: #172438;
+      --ink-soft: #46546b;
+      --line: rgba(23, 36, 56, 0.16);
+      --line-strong: rgba(23, 36, 56, 0.32);
+      --archive-blue: #173b64;
+      --archive-blue-soft: #dbe8ee;
+      --seal: #8f2d23;
+      --seal-soft: rgba(143, 45, 35, 0.1);
+      --gold: #b78a42;
+      --shadow: 0 22px 60px rgba(23, 36, 56, 0.16);
+      --mono: "Courier New", "SF Mono", Menlo, monospace;
+      --serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "STSong", serif;
+      --sans: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at 16% 8%, rgba(183, 138, 66, 0.22), transparent 24rem),
+        radial-gradient(circle at 82% 16%, rgba(23, 59, 100, 0.14), transparent 28rem),
+        linear-gradient(120deg, rgba(255, 250, 240, 0.92), rgba(244, 239, 223, 0.96)),
+        var(--paper);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      content: "";
+      background-image:
+        linear-gradient(rgba(23, 36, 56, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 36, 56, 0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.3));
+    }
+
+    body::after {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      opacity: 0.35;
+      background-image:
+        repeating-linear-gradient(105deg, rgba(23, 36, 56, 0.035) 0, rgba(23, 36, 56, 0.035) 1px, transparent 1px, transparent 8px);
+      mix-blend-mode: multiply;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .shell {
+      width: min(1480px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 28px 0 80px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 16px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 76px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: rgba(255, 250, 240, 0.84);
+      box-shadow: 0 12px 40px rgba(23, 36, 56, 0.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      position: relative;
+      display: grid;
+      width: 48px;
+      height: 48px;
+      place-items: center;
+      color: var(--seal);
+      font-family: var(--serif);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      border: 2px solid currentColor;
+      transform: rotate(-6deg);
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      position: absolute;
+      inset: 6px;
+      content: "";
+      border: 1px solid currentColor;
+    }
+
+    .brand-mark::after {
+      inset: 12px;
+      opacity: 0.55;
+    }
+
+    .brand-title {
+      display: grid;
+      gap: 2px;
+    }
+
+    .brand-title strong {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2vw, 25px);
+      letter-spacing: 0.05em;
+    }
+
+    .brand-title span {
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 14px;
+      color: var(--archive-blue);
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 240, 0.7);
+      font-size: 13px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 16px;
+      color: var(--ink);
+      border: 1px solid var(--line-strong);
+      background: transparent;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(23, 36, 56, 0.1);
+    }
+
+    .btn.primary {
+      color: #fffaf0;
+      border-color: var(--archive-blue);
+      background: var(--archive-blue);
+    }
+
+    .btn.seal {
+      color: #fffaf0;
+      border-color: var(--seal);
+      background: var(--seal);
+    }
+
+    .hero {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 18px;
+      min-height: auto;
+    }
+
+    .hero-panel {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+      gap: 28px;
+      align-items: end;
+      padding: clamp(24px, 3vw, 38px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(145deg, rgba(255, 250, 240, 0.96), rgba(238, 230, 210, 0.64)),
+        var(--paper-card);
+      box-shadow: 0 14px 42px rgba(23, 36, 56, 0.09);
+    }
+
+    .hero-panel::before {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      width: 84px;
+      height: 84px;
+      content: "";
+      border: 1px solid rgba(143, 45, 35, 0.38);
+      opacity: 0.16;
+      transform: rotate(12deg);
+    }
+
+    .hero-panel::after {
+      position: absolute;
+      right: -120px;
+      bottom: -150px;
+      width: 280px;
+      height: 280px;
+      content: "";
+      background:
+        linear-gradient(90deg, transparent 48%, rgba(23, 59, 100, 0.08) 49%, rgba(23, 59, 100, 0.08) 51%, transparent 52%),
+        linear-gradient(0deg, transparent 48%, rgba(23, 59, 100, 0.08) 49%, rgba(23, 59, 100, 0.08) 51%, transparent 52%);
+      background-size: 28px 28px;
+      border: 1px solid rgba(23, 59, 100, 0.1);
+      border-radius: 50%;
+      opacity: 0.42;
+      transform: rotate(-18deg);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 26px;
+      color: var(--seal);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 46px;
+      height: 1px;
+      content: "";
+      background: currentColor;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(34px, 5vw, 62px);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 16px 0 0;
+      color: var(--ink-soft);
+      font-size: clamp(15px, 1.45vw, 17px);
+      line-height: 1.8;
+    }
+
+    .hero-meta {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .hero-meta span {
+      padding: 9px 12px;
+      border: 1px solid rgba(23, 36, 56, 0.16);
+      background: rgba(255, 250, 240, 0.55);
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+
+    .welcome-actions {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid rgba(23, 36, 56, 0.14);
+      background: rgba(255, 250, 240, 0.58);
+    }
+
+    .welcome-actions p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .welcome-action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .welcome-action-row .btn {
+      min-height: 46px;
+    }
+
+    .access-card {
+      position: relative;
+      padding: 28px;
+      border: 1px solid rgba(23, 36, 56, 0.2);
+      background:
+        linear-gradient(180deg, rgba(23, 59, 100, 0.94), rgba(23, 36, 56, 0.96)),
+        var(--archive-blue);
+      color: #fffaf0;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .access-card::before {
+      position: absolute;
+      inset: 18px;
+      content: "";
+      border: 1px solid rgba(255, 250, 240, 0.18);
+      pointer-events: none;
+    }
+
+    .access-card::after {
+      position: absolute;
+      right: -58px;
+      bottom: 26px;
+      width: 220px;
+      height: 220px;
+      content: "PRIVATE";
+      display: grid;
+      place-items: center;
+      color: rgba(255, 250, 240, 0.14);
+      font-family: var(--serif);
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      border: 2px solid rgba(255, 250, 240, 0.18);
+      border-radius: 50%;
+      transform: rotate(-18deg);
+    }
+
+    .access-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .access-card h2 {
+      margin: 6px 0 14px;
+      font-family: var(--serif);
+      font-size: 38px;
+      line-height: 1.12;
+      letter-spacing: -0.04em;
+    }
+
+    .access-card p {
+      margin: 0;
+      color: rgba(255, 250, 240, 0.72);
+      line-height: 1.7;
+    }
+
+    .access-list {
+      display: grid;
+      gap: 12px;
+      margin: 26px 0;
+    }
+
+    .access-list div {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 250, 240, 0.14);
+    }
+
+    .access-list span {
+      color: rgba(255, 250, 240, 0.58);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .access-list strong {
+      text-align: right;
+    }
+
+    .access-card .btn {
+      width: 100%;
+      margin-top: 8px;
+      color: var(--ink);
+      border-color: rgba(255, 250, 240, 0.9);
+      background: #fffaf0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .stat {
+      min-height: 104px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255, 250, 240, 0.82), rgba(255, 250, 240, 0.5)),
+        var(--paper-card);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 12px;
+      font-family: var(--serif);
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1;
+      letter-spacing: -0.08em;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 24px;
+      margin-top: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 112px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 240, 0.78);
+      box-shadow: 0 12px 36px rgba(23, 36, 56, 0.08);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 21px;
+      letter-spacing: -0.02em;
+    }
+
+    .panel-head span {
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .category-list {
+      display: grid;
+      padding: 10px;
+      gap: 8px;
+    }
+
+    .category-btn {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px 12px;
+      color: var(--ink);
+      text-align: left;
+      border: 1px solid transparent;
+      background: transparent;
+      transition: border 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      border-color: rgba(23, 59, 100, 0.22);
+      background: rgba(23, 59, 100, 0.07);
+      transform: translateX(3px);
+    }
+
+    .category-btn strong {
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    .category-btn span {
+      min-width: 34px;
+      padding: 3px 7px;
+      color: var(--archive-blue);
+      text-align: center;
+      border: 1px solid rgba(23, 59, 100, 0.22);
+      font-family: var(--mono);
+      font-size: 12px;
+      background: rgba(255, 250, 240, 0.7);
+    }
+
+    .archive-note {
+      padding: 20px;
+    }
+
+    .archive-note p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .content-area {
+      min-width: 0;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto auto;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      position: relative;
+    }
+
+    .search input {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 16px 0 45px;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      outline: none;
+      background: rgba(255, 250, 240, 0.84);
+      transition: border 160ms ease, box-shadow 160ms ease;
+    }
+
+    .search input:focus {
+      border-color: rgba(23, 59, 100, 0.5);
+      box-shadow: 0 0 0 4px rgba(23, 59, 100, 0.08);
+    }
+
+    .search::before {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      width: 15px;
+      height: 15px;
+      content: "";
+      border: 2px solid var(--archive-blue);
+      border-radius: 50%;
+      transform: translateY(-50%);
+    }
+
+    .search::after {
+      position: absolute;
+      left: 30px;
+      top: 31px;
+      width: 9px;
+      height: 2px;
+      content: "";
+      background: var(--archive-blue);
+      transform: rotate(45deg);
+    }
+
+    .archive-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .archive-card {
+      position: relative;
+      display: grid;
+      min-height: 254px;
+      padding: 18px;
+      border: 1px solid rgba(23, 36, 56, 0.14);
+      background:
+        linear-gradient(180deg, rgba(255, 250, 240, 0.96), rgba(246, 239, 221, 0.86)),
+        var(--paper-card);
+      box-shadow: 0 10px 28px rgba(23, 36, 56, 0.07);
+      transition: transform 180ms ease, border 180ms ease, box-shadow 180ms ease;
+      overflow: hidden;
+    }
+
+    .archive-card:hover {
+      border-color: rgba(23, 59, 100, 0.42);
+      box-shadow: 0 20px 42px rgba(23, 36, 56, 0.14);
+      transform: translateY(-4px);
+    }
+
+    .archive-card::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      content: "";
+      background: linear-gradient(90deg, var(--archive-blue), rgba(183, 138, 66, 0.78), var(--seal));
+    }
+
+    .card-id {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .file-type {
+      color: var(--seal);
+    }
+
+    .archive-card h4 {
+      margin: 18px 0 0;
+      font-family: var(--serif);
+      font-size: 21px;
+      line-height: 1.32;
+      letter-spacing: -0.04em;
+    }
+
+    .card-category {
+      margin-top: 16px;
+      color: var(--archive-blue);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .card-foot {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      align-self: end;
+      margin-top: 18px;
+    }
+
+    .mini-meta {
+      display: grid;
+      gap: 5px;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .text-link {
+      color: var(--archive-blue);
+      border: 0;
+      background: transparent;
+      font-size: 14px;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .download-dock {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 18;
+      display: grid;
+      gap: 8px;
+      width: min(360px, calc(100vw - 48px));
+      padding: 16px;
+      color: #fffaf0;
+      border: 1px solid rgba(255, 250, 240, 0.18);
+      background: rgba(23, 36, 56, 0.92);
+      box-shadow: 0 22px 60px rgba(23, 36, 56, 0.28);
+      backdrop-filter: blur(16px);
+      transform: translateY(0);
+      transition: transform 220ms ease, opacity 220ms ease;
+    }
+
+    .download-dock.hidden {
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .download-dock strong {
+      font-family: var(--serif);
+      font-size: 18px;
+    }
+
+    .download-dock span {
+      color: rgba(255, 250, 240, 0.66);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .download-dock .btn {
+      color: var(--ink);
+      border-color: #fffaf0;
+      background: #fffaf0;
+    }
+
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      pointer-events: none;
+      opacity: 0;
+      background: rgba(23, 36, 56, 0.36);
+      transition: opacity 180ms ease;
+    }
+
+    .drawer-backdrop.open {
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 41;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      width: min(560px, 100vw);
+      height: 100vh;
+      color: var(--ink);
+      border-left: 1px solid var(--line-strong);
+      background:
+        linear-gradient(180deg, rgba(255, 250, 240, 0.97), rgba(238, 229, 205, 0.97)),
+        var(--paper);
+      box-shadow: -20px 0 70px rgba(23, 36, 56, 0.24);
+      transform: translateX(104%);
+      transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      padding: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .drawer-title h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 31px;
+      line-height: 1.2;
+      letter-spacing: -0.04em;
+    }
+
+    .icon-btn {
+      display: grid;
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      background: transparent;
+    }
+
+    .drawer-body {
+      overflow: auto;
+      padding: 24px;
+    }
+
+    .preview-sheet {
+      min-height: 420px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(23, 36, 56, 0.035) 1px, transparent 1px),
+        linear-gradient(rgba(23, 36, 56, 0.035) 1px, transparent 1px),
+        rgba(255, 250, 240, 0.78);
+      background-size: 24px 24px;
+    }
+
+    .preview-sheet span {
+      display: inline-flex;
+      margin-bottom: 22px;
+      padding: 6px 9px;
+      color: var(--seal);
+      border: 1px solid rgba(143, 45, 35, 0.24);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .preview-sheet p {
+      margin: 0 0 15px;
+      color: var(--ink-soft);
+      line-height: 1.85;
+    }
+
+    .drawer-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 18px 24px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 250, 240, 0.84);
+    }
+
+    .gate {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 18% 14%, rgba(183, 138, 66, 0.22), transparent 24rem),
+        radial-gradient(circle at 80% 80%, rgba(143, 45, 35, 0.15), transparent 26rem),
+        rgba(244, 239, 223, 0.94);
+      backdrop-filter: blur(12px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .gate.hidden {
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(1.02);
+    }
+
+    .gate-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.66fr);
+      gap: 0;
+      width: min(940px, 100%);
+      min-height: 560px;
+      border: 1px solid var(--line-strong);
+      background: var(--paper-card);
+      box-shadow: 0 32px 90px rgba(23, 36, 56, 0.24);
+    }
+
+    .gate-left {
+      position: relative;
+      padding: clamp(28px, 5vw, 58px);
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(23, 59, 100, 0.95), rgba(23, 36, 56, 0.98)),
+        var(--archive-blue);
+      color: #fffaf0;
+    }
+
+    .gate-left::after {
+      position: absolute;
+      right: -90px;
+      bottom: -90px;
+      width: 320px;
+      height: 320px;
+      content: "INVITE ONLY";
+      display: grid;
+      place-items: center;
+      color: rgba(255, 250, 240, 0.12);
+      border: 2px solid rgba(255, 250, 240, 0.16);
+      border-radius: 50%;
+      font-family: var(--mono);
+      font-size: 18px;
+      letter-spacing: 0.24em;
+      transform: rotate(-16deg);
+    }
+
+    .gate-left h2 {
+      position: relative;
+      z-index: 1;
+      margin: 42px 0 18px;
+      font-family: var(--serif);
+      font-size: clamp(40px, 7vw, 74px);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+    }
+
+    .gate-left p {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      color: rgba(255, 250, 240, 0.72);
+      line-height: 1.85;
+    }
+
+    .gate-right {
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: clamp(28px, 4vw, 48px);
+      background:
+        linear-gradient(rgba(23, 36, 56, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 36, 56, 0.04) 1px, transparent 1px),
+        var(--paper-card);
+      background-size: 28px 28px;
+    }
+
+    .gate-right label {
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .gate-right input {
+      width: 100%;
+      min-height: 56px;
+      padding: 0 16px;
+      color: var(--ink);
+      border: 1px solid var(--line-strong);
+      outline: none;
+      background: rgba(255, 250, 240, 0.9);
+      font-family: var(--mono);
+      letter-spacing: 0.08em;
+    }
+
+    .gate-hint {
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .gate-error {
+      min-height: 20px;
+      color: var(--seal);
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 80;
+      max-width: min(560px, calc(100vw - 36px));
+      padding: 14px 18px;
+      color: #fffaf0;
+      border: 1px solid rgba(255, 250, 240, 0.18);
+      background: rgba(23, 36, 56, 0.94);
+      box-shadow: 0 18px 48px rgba(23, 36, 56, 0.22);
+      opacity: 0;
+      transform: translate(-50%, 24px);
+      transition: opacity 180ms ease, transform 180ms ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .empty-state {
+      display: none;
+      padding: 54px;
+      text-align: center;
+      border: 1px dashed var(--line-strong);
+      background: rgba(255, 250, 240, 0.62);
+    }
+
+    .empty-state.show {
+      display: block;
+    }
+
+    .reveal {
+      animation: riseIn 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .archive-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 920px) {
+      .topbar {
+        position: static;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .gate-card {
+        grid-template-columns: 1fr;
+      }
+
+      .gate-left {
+        min-height: 330px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 24px, 1480px);
+        padding-top: 12px;
+      }
+
+      .archive-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel,
+      .access-card {
+        padding: 24px;
+      }
+
+      .welcome-action-row {
+        grid-template-columns: 1fr;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .top-actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      .top-actions .btn,
+      .top-actions .pill {
+        flex: 1;
+      }
+
+      .drawer-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="gate" id="gate">
+    <section class="gate-card">
+      <div class="gate-left">
+        <div class="brand-mark">档</div>
+        <h2>策略产品<br>私人档案馆</h2>
+        <p>这不是公开博客，而是一套经过整理的内容资产库。未来真实网站中，邀请码会在服务端校验，下载接口也会被保护。</p>
+      </div>
+      <form class="gate-right" id="gateForm">
+        <label for="inviteCode">Invitation Code</label>
+        <input id="inviteCode" autocomplete="off" placeholder="ARCHIVE-2026">
+        <button class="btn primary" type="submit">进入档案馆</button>
+        <div class="gate-hint">原型演示码：<strong>ARCHIVE-2026</strong>。这里仅用于预览交互，不代表正式邀请码规则。</div>
+        <div class="gate-error" id="gateError"></div>
+      </form>
+    </section>
+  </div>
+
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="返回首页">
+        <div class="brand-mark">档</div>
+        <div class="brand-title">
+          <strong>策略产品私人档案馆</strong>
+          <span>Private strategy archive</span>
+        </div>
+      </a>
+      <div class="top-actions">
+        <span class="pill" id="accessPill">已通过邀请码</span>
+        <a class="pill" href="https://www.xiaohongshu.com/user/profile/5c5e2a8f0000000018027424" target="_blank" rel="noreferrer">小红书主页</a>
+        <button class="btn" id="lockPreview">查看锁定态</button>
+        <button class="btn seal" id="bulkDownload">下载全部内容</button>
+      </div>
+    </header>
+
+    <section class="hero" id="top">
+      <div class="hero-panel reveal">
+        <div>
+          <div class="eyebrow">资料库已解锁</div>
+          <h1>欢迎进入策略产品资料库</h1>
+          <p class="hero-copy">这里整理了小红书店铺配套资料：策略产品入门、推荐 PM、进阶方法、AI 产品和职场经验。你可以直接搜索关键词，也可以从下方目录进入对应专栏。</p>
+          <div class="hero-meta">
+            <span>144 份资料</span>
+            <span>139 篇 PDF</span>
+            <span>12 个分类</span>
+            <span>支持单篇 / 分类 / 全部下载</span>
+          </div>
+        </div>
+        <div class="welcome-actions">
+          <p>如果你是通过小红书店铺购买后收到链接和邀请码，进入后直接查找资料即可。建议先按专栏浏览，遇到关键词可直接搜索。</p>
+          <div class="welcome-action-row">
+            <button class="btn primary" id="jumpLibrary">开始浏览</button>
+            <button class="btn seal" id="heroDownload">下载全部</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="内容统计">
+      <div class="stat reveal" style="animation-delay: 40ms"><span>Total files</span><strong id="statTotal">144</strong></div>
+      <div class="stat reveal" style="animation-delay: 80ms"><span>PDF notes</span><strong id="statPdf">139</strong></div>
+      <div class="stat reveal" style="animation-delay: 120ms"><span>Categories</span><strong id="statCats">11</strong></div>
+      <div class="stat reveal" style="animation-delay: 160ms"><span>Asset size</span><strong>165M</strong></div>
+    </section>
+
+    <section class="main-grid" id="library">
+      <aside class="sidebar">
+        <section class="panel">
+          <div class="panel-head">
+            <h3>档案目录</h3>
+            <span>Folders</span>
+          </div>
+          <div class="category-list" id="categoryList"></div>
+        </section>
+        <section class="panel archive-note">
+          <p>使用建议：先选择左侧专栏，再通过关键词搜索定位具体内容。需要离线保存时，可以下载单篇、当前分类或全部资料。</p>
+        </section>
+      </aside>
+
+      <section class="content-area">
+        <div class="toolbar">
+          <div class="search">
+            <input id="searchInput" placeholder="搜索标题、分类、AI、推荐、职场、AB Test...">
+          </div>
+          <button class="btn" id="sortToggle">排序：课程序号</button>
+          <button class="btn primary" id="downloadCategory">下载当前分类</button>
+        </div>
+        <div class="archive-grid" id="archiveGrid"></div>
+        <div class="empty-state" id="emptyState">
+          <h3>没有找到匹配内容</h3>
+          <p>试试搜索「推荐」「策略」「AI」「职场」或切换分类。</p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <aside class="download-dock hidden" id="downloadDock">
+    <strong>下载清单已更新</strong>
+    <span id="dockCopy">已选中 0 个文件。正式版会在这里生成受保护下载链接。</span>
+    <button class="btn" id="clearSelection">清空选择</button>
+  </aside>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="drawer" id="drawer" aria-label="内容详情">
+    <div class="drawer-head">
+      <div class="drawer-title">
+        <h2 id="drawerTitle">内容标题</h2>
+        <button class="icon-btn" id="drawerClose" aria-label="关闭">×</button>
+      </div>
+      <p class="card-category" id="drawerCategory"></p>
+    </div>
+    <div class="drawer-body">
+      <div class="preview-sheet">
+        <span id="drawerType">PDF Preview</span>
+        <p id="drawerIntro">这里是正式版的内容预览区域。PDF 可以显示首屏缩略图、核心摘要、页数和更新时间。</p>
+        <p>原型阶段先展示交互骨架：读者进入详情后，可以下载单篇、加入下载清单，或者回到分类继续浏览。</p>
+        <p>如果你确认这个方向，下一步会把本地目录自动扫描成数据库式 manifest，并把真实文件上传到私有存储。</p>
+      </div>
+    </div>
+    <div class="drawer-actions">
+      <button class="btn primary" id="downloadSingle">下载这篇</button>
+      <button class="btn" id="addToPack">加入下载清单</button>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const files = [
+      { category: "AI时代策略产品工作方式", title: "AI时代的策略产品工作方式1：策略PM用AI，不是提效，是找一个更快的思考对手", type: "pdf" },
+      { category: "AI时代策略产品工作方式", title: "AI时代的策略产品工作方式2：指标异动，先让 AI 帮你把坑数清楚，再去跳", type: "pdf" },
+      { category: "NotebookLLM生成图", title: "Algorithm_Treasure_Map", type: "pdf" },
+      { category: "NotebookLLM生成图", title: "Search_Recommendation_Advertising_Explained", type: "pdf" },
+      { category: "NotebookLLM生成图", title: "搜索_推荐_广告_三种生意", type: "pdf" },
+      { category: "个人品牌资产", title: "xiaohongshu-post", type: "skill" },
+      { category: "个人品牌资产", title: "我的个人写作风格指南", type: "md" },
+      { category: "产品实习生通关指南", title: "PM实习生通关指南1：第一天，别把自己当学生！实习生必备的3个职场心态", type: "pdf" },
+      { category: "产品实习生通关指南", title: "PM实习生通关指南2：如何做一次让老板和同事都记住你的自我介绍？（附万能公式）", type: "pdf" },
+      { category: "产品实习生通关指南", title: "PM实习生通关指南3：3个步骤，让你在3天内快速看懂公司业务和行业格局", type: "pdf" },
+      { category: "产品实习生通关指南", title: "PM实习生通关指南4 _ 经典面试问题，如何从数据维度定义抖音的优质内容？", type: "pdf" },
+      { category: "小红书商业合作", title: "AI多模态，终于从“画饼”进化到“能打”了？", type: "pdf" },
+      { category: "小红书商业合作", title: "AI炒股大赛，是我今年看到最好的_产品翻车_案例", type: "pdf" },
+      { category: "小红书商业合作", title: "用了半年Meta后，我发现国产AI眼镜赢在充电？", type: "pdf" },
+      { category: "小红书商业合作", title: "不吹不黑，企微AI周报比飞书文档好用", type: "pdf" },
+      { category: "小红书商业合作", title: "之前提到的那个“浏览器革命”，聊聊夸克AI浏览器的“红与黑”", type: "pdf" },
+      { category: "小红书商业合作", title: "产品经理必备｜用这款AI画布工具，竞品分析效率翻倍！", type: "pdf" },
+      { category: "小红书商业合作", title: "做了5年策略PM，自己做项目时才发现这些技能我根本不会｜墨刀AI体验", type: "pdf" },
+      { category: "小红书商业合作", title: "全世界最_重_的互联网公司，正被16000名客服拖垮", type: "pdf" },
+      { category: "小红书商业合作", title: "前百度产品经理锐评：搜索下半场，终于开始了", type: "pdf" },
+      { category: "小红书商业合作", title: "千问1000万单背后：些许不完美，但通往未来", type: "pdf" },
+      { category: "小红书商业合作", title: "夸克C计划：一个产品经理眼中的_浏览器革命_", type: "pdf" },
+      { category: "小红书商业合作", title: "当智能变轻，软件还需要一百万用户吗？", type: "pdf" },
+      { category: "小红书商业合作", title: "我在JDD大会抄下的5条未来AI趋势", type: "pdf" },
+      { category: "小红书商业合作", title: "把_我_当成产品：用AI做了一次乔哈里视窗盲区测试", type: "pdf" },
+      { category: "小红书商业合作", title: "推荐的尽头是“猜你喜欢”，Agent的尽头是“替你下单”", type: "pdf" },
+      { category: "小红书商业合作", title: "深度拆解｜吊打Excel，这家袜子届的labubu超高的电商运营效率到底依靠什么？", type: "pdf" },
+      { category: "小红书商业合作", title: "用PM思维玩转Boss直聘，拿offer如喝水般简单", type: "pdf" },
+      { category: "小红书商业合作", title: "真正跑出来的AI产品，是要通_人性_的", type: "pdf" },
+      { category: "小红书商业合作", title: "硅谷AI遥遥领先的叙事下，Meta选择了低头", type: "pdf" },
+      { category: "小红书商业合作", title: "策略PM的百度AI公开课笔记 _ 当AI开始_自我演化_，我们的护城河在哪？", type: "pdf" },
+      { category: "小红书商业合作", title: "阿里选的这条路，是Google走过的“窄门”", type: "pdf" },
+      { category: "小红书商业合作素材", title: "农业品直播带货苏绣风格", type: "png" },
+      { category: "小红书商业合作素材", title: "刺绣完美版", type: "png" },
+      { category: "小红书商业合作素材", title: "神女刺绣", type: "png" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第1讲：很多人想做推荐 PM，但其实没想清楚「推荐」是什么", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第2讲：你适不适合做推荐 PM，其实一开始就有答案", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第3讲：搜索 vs 推荐 vs 广告，同为策略产品，差别在哪里？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第4讲：推荐系统的三方博弈——用户、供给方与平台的三角关系", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第5讲：指标体系深水区——如何构建一套能_指挥_算法的度量框架？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第6讲：经典框架“召回、粗排、精排、重排”，这四层结构到底在干什么？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第7讲：召回初探，协同过滤其实就是_物以类聚_", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第8讲：向量召回，万物皆可向量，这就是推荐系统的_眼睛_", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第9讲：特征工程，PM 如何帮算法找_燃料_？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第10讲：精排逻辑，从 LR、FM 到深度学习，PM 到底需要理解到什么程度？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第11讲：多目标建模，又要点击又要转发还要购买，算法怎么权衡？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第12讲：冷启动方案，没有数据时，推荐系统如何_破冰_？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第13讲：多样性策略，为什么不能一直给用户推同一类内容？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第14讲：怎么建立用户兴趣画像，区分用户的长期和短期兴趣", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第15讲：负反馈处理，用户点了_不感兴趣_，系统该如何反应？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第16讲：推荐系统时效性详解，为什么推荐池必须是_流动的_？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第17讲：内容生态策略，流量指挥棒如何配合平台价值观？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第18讲：创作者策略，如何用流量编织一套_有温度_的激励体系？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第19讲：重排策略，强插、置顶、广告混排的业务逻辑", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第20讲：大模型时代，LLM 正在如何重塑推荐系统？（附淘宝和快手实践拆解）", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第21讲：详解供需策略，双边市场如何实现_效率最优_？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第22讲：智能补贴，基于 Uplift 模型的红包发放策略", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第23讲：动态定价，推荐系统中的价格弹性和算法干预", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第24讲：电商推荐，从流量分发到 GMV 增长的深度博弈", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第25讲：本地生活策略，LBS、即时供给与地理栅栏的逻辑", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第26讲：怎么和算法协作，业务假设、特征工程与共创流程逻辑", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第27讲：运营协同，流量调控、扶持权重与人工干预边界", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第28讲：和数分合作，指标建模、A_B 归因与深层洞察逻辑", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第29讲：认知获取，推荐产品如何构建跨学科的知识雷达？", type: "pdf" },
+      { category: "推荐PM手把手入门专栏", title: "推荐PM手把手入门第30讲：手把手带你走完一个推荐策略需求的立项全过程", type: "pdf" },
+      { category: "热点速递", title: "互联网大厂校招邪修｜用龙虾搞定求职", type: "pdf" },
+      { category: "热点速递", title: "元宝红包撒币，腾讯产品梦碎", type: "pdf" },
+      { category: "热点速递", title: "很多人不敢说，AI未来是会替代策略产品岗的", type: "pdf" },
+      { category: "热点速递", title: "拆解Dating App策略：为什么你永远匹配不到对的人？", type: "pdf" },
+      { category: "热点速递", title: "策略PM蒸馏不成skill，至少现在还不行", type: "pdf" },
+      { category: "热点速递", title: "除了安装龙虾（OpenClaw），一些我们需要知道的其他事情", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程1：深度解析策略产品经理到底是什么？", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程2：策略产品的核心能力模型，从数据到决策的全链路思维", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程3：新人如何有效拆解策略case", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程4：大厂策略产品团队结构与协作模式", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程5：入行前的准备与自我评估", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程6：策略数据分析入门之基础指标体系", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程7：数据分析进阶之SQL基础与应用", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程8：用户画像构建与应用", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程9：大厂A_B Test方法论", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程10：大厂策略文档撰写实战", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程11：怎么定业务指标，以及为什么好的指标可以决定业务生死", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程12：增长策略设计与实施", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程13：留存策略优化实战（附小红书留存策略拆解）", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程14：活跃度提升策略", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程15：变现策略与商业化思维", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程16：内容策略与算法调优", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程17：社区_社交产品策略设计，如何从0到1构建活跃社区生态", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程18：策略产品的晋升路径与成长模型", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程19：数据敏感度与业务洞察", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程20：天花板实验怎么做，策略PM一定要会的增长上限探测法", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程21：内容扶持实验怎么做", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程22：策略反转实验设计", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程23：策略PM的推荐系统认知扫盲", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程24：搜索竞对评估体系GSB详解", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程25：终于有人把互联网offer选择讲清楚了", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程26：深度解读AB实验vs AA指标差异", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程27：策略是怎么制定的，5年经验掏心掏肺版", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程28：老板跪下求我分享的策略失败拆解方法", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程29：策略效果怎么评估（附案例）", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品经理入门教程30：策略产品的价值思考（完结撒花）", type: "pdf" },
+      { category: "策略产品入门专栏", title: "策略产品入门教程30讲（全部文档汇总版！！！）", type: "pdf" },
+      { category: "策略产品入门专栏", title: "推荐策略PM的核心价值到底是什么？", type: "pdf" },
+      { category: "策略产品入门专栏", title: "【增补】策略PM入门教程：怎么发现问题？", type: "pdf" },
+      { category: "策略产品入门专栏", title: "【增补】策略PM入门教程：思维发散的人怎么做策略，不是改掉它，是驯化它", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程1：资深策略产品经理最重要的思维，“抓大放小”", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程2：生态思维，从产品功能到多边平台治理", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程3：复杂指标体系设计，从_北极星_到_群星_", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程4：资深策略产品如何向上汇报，说清复杂系统", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程5：策略方向的天花板怎么测", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程6：构建你的业务名片，OnePager说透复杂业务", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程7：深度聊下内容推荐，怎么构建内容和人的关联", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程8：资深策略产品怎么看部门或者业务是否核心？", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程9：推荐策略中的AI应用", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程10：怎么规划和推动一个策略方向", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程11：怎么和法务_PR_GR沟通？", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程12：空杯心态，策略产品怎么面对质疑", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程13：如何串联零散项目，讲好晋升故事", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程14：策略产品的第一性原理", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程15：OKR Review怎么写的高说服力&体现价值？", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程16：滑跪道歉SOP，如何体面地承认_我搞砸了_", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程17：协作方甩锅怎么办？明确时间线，定位问题，该硬的时候就要硬", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程18：第一次跳槽要注意些什么", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程19：Trade-off思维的艺术", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程20：你才是自己人生的首席策略官", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程增补1：策略项目怎么定业务核心指标", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程增补2：你以为你在分析数据，其实你在用数据印证你早就有的答案", type: "pdf" },
+      { category: "策略产品进阶专栏", title: "策略PM进阶教程增补3：定方向最难的，不是想方案，是先看清这个场景到底卡在哪", type: "pdf" },
+      { category: "策略产品透镜", title: "ChatGPT要_解禁_成人内容？Sam Altman的豪赌：情色是魔鬼，也是AI的_成人礼_", type: "pdf" },
+      { category: "策略产品透镜", title: "付费短剧App的吸金密码：一场精密计算的_上瘾_游戏", type: "pdf" },
+      { category: "职场体验分享", title: "10月底的秋招，如刻舟求剑", type: "pdf" },
+      { category: "职场体验分享", title: "qtmd，原来我在开始工作前就丢掉了活人感", type: "pdf" },
+      { category: "职场体验分享", title: "一个大厂策略产品的副业一年：在算法和人之间，我选择了后者", type: "pdf" },
+      { category: "职场体验分享", title: "一文说清楚策略PM和AI PM的异同与怎么选择", type: "pdf" },
+      { category: "职场体验分享", title: "亲测好用的字节360环评Prompt", type: "pdf" },
+      { category: "职场体验分享", title: "作为产品经理，那些回报率排前1%的思维模型", type: "pdf" },
+      { category: "职场体验分享", title: "功能产品转策略产品，没那么难", type: "pdf" },
+      { category: "职场体验分享", title: "在大厂选老板，本质是选一个“学习系统 + 结果环境”", type: "pdf" },
+      { category: "职场体验分享", title: "大厂生存指南：一些需要远离的同事特征", type: "pdf" },
+      { category: "职场体验分享", title: "活班养人，死班困人，祝大家2026年少上死班", type: "pdf" },
+      { category: "职场体验分享", title: "用策略PM思维找工作：26年校招倒排计划表", type: "pdf" },
+      { category: "职场体验分享", title: "策略产品经理工作中最提效的AI大模型对话产品，不接受反驳", type: "pdf" },
+      { category: "职场体验分享", title: "策略产品经理飞升指南（仿李新野之作）", type: "pdf" },
+      { category: "职场体验分享", title: "讨好型人格不适合做策略产品｜5年大厂复盘", type: "pdf" }
+    ];
+
+    const state = {
+      category: "全部内容",
+      query: "",
+      sortMode: "sequence",
+      selected: new Set(),
+      activeFile: null
+    };
+
+    const categoryList = document.querySelector("#categoryList");
+    const archiveGrid = document.querySelector("#archiveGrid");
+    const emptyState = document.querySelector("#emptyState");
+    const searchInput = document.querySelector("#searchInput");
+    const sortToggle = document.querySelector("#sortToggle");
+    const drawer = document.querySelector("#drawer");
+    const drawerBackdrop = document.querySelector("#drawerBackdrop");
+    const toast = document.querySelector("#toast");
+    const downloadDock = document.querySelector("#downloadDock");
+    const dockCopy = document.querySelector("#dockCopy");
+
+    function lessonNumber(title) {
+      const match = title.match(/第(\d+)讲|教程(\d+)|指南(\d+)|工作方式(\d+)/);
+      if (!match) return 999;
+      return Number(match[1] || match[2] || match[3] || match[4]);
+    }
+
+    function fileId(file, index) {
+      const prefix = file.type.toUpperCase().padEnd(5, " ");
+      return `${prefix}-${String(index + 1).padStart(3, "0")}`;
+    }
+
+    function getCategories() {
+      const counts = files.reduce((acc, file) => {
+        acc[file.category] = (acc[file.category] || 0) + 1;
+        return acc;
+      }, {});
+      return [
+        ["全部内容", files.length],
+        ...Object.entries(counts).sort((a, b) => b[1] - a[1])
+      ];
+    }
+
+    function filteredFiles() {
+      const query = state.query.trim().toLowerCase();
+      let list = files.filter(file => {
+        const categoryMatched = state.category === "全部内容" || file.category === state.category;
+        const text = `${file.category} ${file.title} ${file.type}`.toLowerCase();
+        return categoryMatched && (!query || text.includes(query));
+      });
+      if (state.sortMode === "sequence") {
+        list = list.sort((a, b) => a.category.localeCompare(b.category, "zh-Hans-CN") || lessonNumber(a.title) - lessonNumber(b.title) || a.title.localeCompare(b.title, "zh-Hans-CN"));
+      } else {
+        list = list.sort((a, b) => a.title.localeCompare(b.title, "zh-Hans-CN"));
+      }
+      return list;
+    }
+
+    function renderCategories() {
+      categoryList.innerHTML = "";
+      getCategories().forEach(([category, count]) => {
+        const button = document.createElement("button");
+        button.className = `category-btn${state.category === category ? " active" : ""}`;
+        button.type = "button";
+        button.innerHTML = `<strong>${category}</strong><span>${count}</span>`;
+        button.addEventListener("click", () => {
+          state.category = category;
+          render();
+        });
+        categoryList.appendChild(button);
+      });
+    }
+
+    function renderCards() {
+      const list = filteredFiles();
+      archiveGrid.innerHTML = "";
+      emptyState.classList.toggle("show", list.length === 0);
+      list.forEach((file, visibleIndex) => {
+        const originalIndex = files.indexOf(file);
+        const card = document.createElement("article");
+        card.className = "archive-card reveal";
+        card.style.animationDelay = `${Math.min(visibleIndex, 12) * 28}ms`;
+        card.innerHTML = `
+          <div class="card-id">
+            <span>${fileId(file, originalIndex)}</span>
+            <span class="file-type">${file.type}</span>
+          </div>
+          <h4>${file.title}</h4>
+          <div class="card-category">${file.category}</div>
+          <div class="card-foot">
+            <div class="mini-meta">
+              <span>${file.type === "pdf" ? "Document" : "Asset"}</span>
+              <span>${state.selected.has(originalIndex) ? "Selected" : "Ready"}</span>
+            </div>
+            <button class="text-link" type="button">查看详情</button>
+          </div>
+        `;
+        card.querySelector("button").addEventListener("click", () => openDrawer(file, originalIndex));
+        card.addEventListener("dblclick", () => {
+          toggleSelected(originalIndex);
+          showToast("已加入下载清单。正式版会生成私有下载链接。");
+        });
+        archiveGrid.appendChild(card);
+      });
+    }
+
+    function renderStats() {
+      document.querySelector("#statTotal").textContent = files.length;
+      document.querySelector("#statPdf").textContent = files.filter(file => file.type === "pdf").length;
+      document.querySelector("#statCats").textContent = getCategories().length - 1;
+    }
+
+    function renderDock() {
+      const count = state.selected.size;
+      downloadDock.classList.toggle("hidden", count === 0);
+      dockCopy.textContent = `已选中 ${count} 个文件。正式版会把这些文件打成受保护压缩包。`;
+    }
+
+    function render() {
+      renderCategories();
+      renderCards();
+      renderStats();
+      renderDock();
+    }
+
+    function openDrawer(file, index) {
+      state.activeFile = { file, index };
+      document.querySelector("#drawerTitle").textContent = file.title;
+      document.querySelector("#drawerCategory").textContent = `${file.category} / ${file.type.toUpperCase()} / ${fileId(file, index)}`;
+      document.querySelector("#drawerType").textContent = `${file.type.toUpperCase()} Preview`;
+      document.querySelector("#drawerIntro").textContent = file.type === "pdf"
+        ? "正式版这里可以放 PDF 首屏缩略图、页数、文件大小、摘要和真实下载按钮。"
+        : "正式版这里可以放图片缩略图、素材用途说明和真实下载按钮。";
+      drawer.classList.add("open");
+      drawerBackdrop.classList.add("open");
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove("open");
+      drawerBackdrop.classList.remove("open");
+    }
+
+    function toggleSelected(index) {
+      if (state.selected.has(index)) {
+        state.selected.delete(index);
+      } else {
+        state.selected.add(index);
+      }
+      renderDock();
+      renderCards();
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    document.querySelector("#gateForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const value = document.querySelector("#inviteCode").value.trim();
+      const error = document.querySelector("#gateError");
+      if (value === "ARCHIVE-2026") {
+        document.querySelector("#gate").classList.add("hidden");
+        showToast("已进入原型预览。正式版会在服务端校验邀请码。");
+        error.textContent = "";
+      } else {
+        error.textContent = "演示码不匹配。请输入 ARCHIVE-2026。";
+      }
+    });
+
+    document.querySelector("#lockPreview").addEventListener("click", () => {
+      document.querySelector("#gate").classList.remove("hidden");
+      document.querySelector("#inviteCode").value = "";
+      document.querySelector("#gateError").textContent = "";
+    });
+
+    document.querySelector("#jumpLibrary").addEventListener("click", () => {
+      document.querySelector("#library").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    document.querySelector("#bulkDownload").addEventListener("click", () => {
+      showToast("原型中不触发真实下载。正式版会提供全部内容压缩包。");
+    });
+
+    document.querySelector("#heroDownload").addEventListener("click", () => {
+      showToast("原型中不触发真实下载。正式版会提供全部内容压缩包。");
+    });
+
+    document.querySelector("#downloadCategory").addEventListener("click", () => {
+      const count = filteredFiles().length;
+      showToast(`当前筛选命中 ${count} 个文件。正式版会生成该范围的下载包。`);
+    });
+
+    document.querySelector("#downloadSingle").addEventListener("click", () => {
+      if (!state.activeFile) return;
+      showToast(`模拟下载：${state.activeFile.file.title}`);
+    });
+
+    document.querySelector("#addToPack").addEventListener("click", () => {
+      if (!state.activeFile) return;
+      toggleSelected(state.activeFile.index);
+      showToast("下载清单已更新。");
+    });
+
+    document.querySelector("#clearSelection").addEventListener("click", () => {
+      state.selected.clear();
+      renderDock();
+      renderCards();
+      showToast("下载清单已清空。");
+    });
+
+    document.querySelector("#drawerClose").addEventListener("click", closeDrawer);
+    drawerBackdrop.addEventListener("click", closeDrawer);
+
+    searchInput.addEventListener("input", event => {
+      state.query = event.target.value;
+      renderCards();
+    });
+
+    sortToggle.addEventListener("click", () => {
+      state.sortMode = state.sortMode === "sequence" ? "title" : "sequence";
+      sortToggle.textContent = state.sortMode === "sequence" ? "排序：课程序号" : "排序：标题拼音";
+      renderCards();
+    });
+
+    window.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeDrawer();
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
